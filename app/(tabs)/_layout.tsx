@@ -7,7 +7,7 @@ import { components,colors } from "@/constants/theme";
 
 const tabBar=components.tabBar;
 
-const tabLayout = () => {
+const TabLayout = () => {
     const insets=useSafeAreaInsets()
     const TabIcon = ({ focused, icon }: TabIconProps) => {
         return <View className="tabs-icon">
@@ -49,4 +49,4 @@ const tabLayout = () => {
     </Tabs>
 }
 
-export default tabLayout
+export default TabLayout
