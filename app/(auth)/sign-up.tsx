@@ -1,14 +1,201 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Link } from 'expo-router'
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+} from "react-native";
 
-const signUp = () => {
+import { Link, router } from "expo-router";
+
+import {
+  useSignUp,
+  useSSO,
+} from "@clerk/expo";
+
+import * as WebBrowser from "expo-web-browser";
+import * as AuthSession from "expo-auth-session";
+
+WebBrowser.maybeCompleteAuthSession();
+
+export default function SignUpPage() {
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { signUp, isLoaded } = useSignUp();
+
+  const { startSSOFlow } = useSSO();
+
+  const onSignUpPress = async () => {
+    if (!isLoaded) return;
+
+    try {
+      await signUp.create({
+        emailAddress,
+        password,
+      });
+
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
+
+      Alert.alert(
+        "Verification Email Sent",
+        "Please verify your email address."
+      );
+    } catch (err: any) {
+      Alert.alert(
+        "Sign Up Failed",
+        err?.errors?.[0]?.longMessage || "Something went wrong"
+      );
+    }
+  };
+
+  const onGooglePress = async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: "oauth_google",
+
+        redirectUrl: AuthSession.makeRedirectUri({
+          scheme: "pulsepay",
+        }),
+      });
+
+      if (createdSessionId) {
+        await setActive!({
+          session: createdSessionId,
+        });
+
+        router.replace("/");
+      }
+    } catch (err: any) {
+      Alert.alert(
+        "Google Sign Up Failed",
+        err?.errors?.[0]?.longMessage || "Something went wrong"
+      );
+    }
+  };
+
   return (
-    <View>
-      <Text>sign-up</Text>
-       <Link href="/(auth)/sign-in" className="mt-4 rounded p-4 bg-primary text-white">Sign In</Link>
-    </View>
-  )
-}
+    <SafeAreaView className="flex-1 bg-[#F6F0DD]">
+      <View className="flex-1 justify-center px-6">
+        {/* Logo */}
 
-export default signUp
+        <View className="items-center mb-12">
+          <View className="flex-row items-center gap-3">
+            <View className="w-14 h-14 bg-[#E0824E] rounded-2xl items-center justify-center">
+              <Text className="text-white text-2xl font-bold">
+                R
+              </Text>
+            </View>
+
+            <View>
+              <Text className="text-2xl font-bold text-[#1E2235]">
+                Recurly
+              </Text>
+
+              <Text className="text-xs text-gray-500 tracking-wide">
+                SMART BILLING
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Card */}
+
+        <View className="bg-[#F6F0DD] border border-[#DDD4BE] rounded-2xl p-5">
+          <Text className="text-3xl font-bold text-center text-[#1E2235]">
+            Create account
+          </Text>
+
+          <Text className="text-center text-gray-500 mt-2 mb-8">
+            Start managing subscriptions easily
+          </Text>
+
+          {/* Email */}
+
+          <View className="mb-5">
+            <Text className="text-[#1E2235] mb-2 font-medium">
+              Email
+            </Text>
+
+            <TextInput
+              className="border border-[#D8CFB9] rounded-xl px-4 py-4 bg-[#FBF7EA]"
+              placeholder="Enter your email"
+              placeholderTextColor="#8A8A8A"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={emailAddress}
+              onChangeText={setEmailAddress}
+            />
+          </View>
+
+          {/* Password */}
+
+          <View className="mb-6">
+            <Text className="text-[#1E2235] mb-2 font-medium">
+              Password
+            </Text>
+
+            <TextInput
+              className="border border-[#D8CFB9] rounded-xl px-4 py-4 bg-[#FBF7EA]"
+              placeholder="Enter your password"
+              placeholderTextColor="#8A8A8A"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+
+          {/* Sign Up Button */}
+
+          <TouchableOpacity
+            onPress={onSignUpPress}
+            className="bg-[#E0824E] rounded-xl py-4"
+          >
+            <Text className="text-white text-center font-semibold text-base">
+              Create account
+            </Text>
+          </TouchableOpacity>
+
+          {/* Divider */}
+
+          <View className="flex-row items-center my-5">
+            <View className="flex-1 h-[1px] bg-[#DDD4BE]" />
+
+            <Text className="mx-3 text-gray-400">OR</Text>
+
+            <View className="flex-1 h-[1px] bg-[#DDD4BE]" />
+          </View>
+
+          {/* Google Button */}
+
+          <TouchableOpacity
+            onPress={onGooglePress}
+            className="border border-[#D8CFB9] rounded-xl py-4 bg-white"
+          >
+            <Text className="text-[#1E2235] text-center font-semibold text-base">
+              Continue with Google
+            </Text>
+          </TouchableOpacity>
+
+          {/* Footer */}
+
+          <View className="flex-row justify-center mt-6">
+            <Text className="text-gray-500">
+              Already have an account?{" "}
+            </Text>
+
+            <Link href="/sign-in">
+              <Text className="text-[#E0824E] font-semibold">
+                Sign in
+              </Text>
+            </Link>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
