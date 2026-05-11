@@ -38,7 +38,17 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      ["expo-font",{
+        "fonts":[
+          "./assets/fonts/plusJakartaSans-Regular.ttf",
+          "./assets/fonts/plusJakartaSans-Bold.ttf",
+          "./assets/fonts/plusJakartaSans-Medium.ttf",
+          "./assets/fonts/plusJakartaSans-SemiBold.ttf",
+          "./assets/fonts/plusJakartaSans-ExtraBold.ttf",
+          "./assets/fonts/plusJakartaSans-Light.ttf"
+        ]
+      }]
     ],
     "experiments": {
       "typedRoutes": true,
