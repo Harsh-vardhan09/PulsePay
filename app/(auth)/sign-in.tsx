@@ -37,11 +37,18 @@ export default function SignInPage() {
         password,
       });
 
-      await setActive({
-        session: completeSignIn.createdSessionId,
-      });
-
-      router.replace("/");
+      if (completeSignIn.status === "complete") {
+        await setActive({
+          session: completeSignIn.createdSessionId,
+        });
+        router.replace("/");
+      } else if (completeSignIn.status === "needs_second_factor") {
+        // route to MFA / verification UI
+      } else if (completeSignIn.status === "needs_client_trust") {
+        // start the client-trust verification step
+      } else {
+        Alert.alert("Sign In Incomplete", "Additional verification is required.");
+      }
     } catch (err: any) {
       Alert.alert(
         "Sign In Failed",

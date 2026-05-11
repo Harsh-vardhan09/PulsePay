@@ -25,7 +25,7 @@ const Settings = () => {
   const handleSignOut = async () => {
     await signOut();
 
-    router.replace("/sign-in");
+    router.replace("/(auth)/sign-in");
   };
 
   const displayName =

@@ -1,54 +1,90 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  Alert,
+    Alert,
+    SafeAreaView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 import { Link, router } from "expo-router";
 
 import {
-  useSignUp,
-  useSSO,
+    useSignUp,
+    useSSO,
 } from "@clerk/expo";
 
-import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SignUpPage() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationPending, setVerificationPending] = useState(false);
 
-  const { signUp, isLoaded } = useSignUp();
+  const { signUp, fetchStatus } = useSignUp();
 
   const { startSSOFlow } = useSSO();
 
   const onSignUpPress = async () => {
-    if (!isLoaded) return;
+    if (!signUp || fetchStatus === "fetching") return;
 
     try {
-      await signUp.create({
+      const signUpResult = await signUp.create({
         emailAddress,
         password,
       });
 
-      await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
-      });
+      if (signUpResult.error) {
+        throw signUpResult.error;
+      }
+
+      const sendCodeResult = await signUp.verifications.sendEmailCode();
+      if (sendCodeResult.error) {
+        throw sendCodeResult.error;
+      }
+
+      setVerificationPending(true);
+      setVerificationCode("");
 
       Alert.alert(
-        "Verification Email Sent",
-        "Please verify your email address."
+        "Verification Code Sent",
+        `A code was sent to ${emailAddress}. Enter it below to complete your account.`
       );
     } catch (err: any) {
       Alert.alert(
         "Sign Up Failed",
-        err?.errors?.[0]?.longMessage || "Something went wrong"
+        err?.errors?.[0]?.longMessage || err?.message || "Something went wrong"
+      );
+    }
+  };
+
+  const onVerifyPress = async () => {
+    if (!signUp || fetchStatus === "fetching") return;
+
+    try {
+      const verifyResult = await signUp.verifications.verifyEmailCode({
+        code: verificationCode,
+      });
+
+      if (verifyResult.error) {
+        throw verifyResult.error;
+      }
+
+      const finalizeResult = await signUp.finalize();
+      if (finalizeResult.error) {
+        throw finalizeResult.error;
+      }
+
+      router.replace("/");
+    } catch (err: any) {
+      Alert.alert(
+        "Verification Failed",
+        err?.errors?.[0]?.longMessage || err?.message || "Unable to verify the code"
       );
     }
   };
@@ -149,14 +185,31 @@ export default function SignUpPage() {
             />
           </View>
 
+          {verificationPending ? (
+            <View className="mb-6">
+              <Text className="text-[#1E2235] mb-2 font-medium">
+                Verification code
+              </Text>
+
+              <TextInput
+                className="border border-[#D8CFB9] rounded-xl px-4 py-4 bg-[#FBF7EA]"
+                placeholder="Enter the code from your email"
+                placeholderTextColor="#8A8A8A"
+                keyboardType="number-pad"
+                value={verificationCode}
+                onChangeText={setVerificationCode}
+              />
+            </View>
+          ) : null}
+
           {/* Sign Up Button */}
 
           <TouchableOpacity
-            onPress={onSignUpPress}
+            onPress={verificationPending ? onVerifyPress : onSignUpPress}
             className="bg-[#E0824E] rounded-xl py-4"
           >
             <Text className="text-white text-center font-semibold text-base">
-              Create account
+              {verificationPending ? "Verify code" : "Create account"}
             </Text>
           </TouchableOpacity>
 
