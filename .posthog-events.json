@@ -1,0 +1,52 @@
+[
+  {
+    "event": "user_signed_in",
+    "description": "User successfully signs in with email and password via Clerk",
+    "file": "app/(auth)/sign-in.tsx"
+  },
+  {
+    "event": "user_signed_in_google",
+    "description": "User successfully signs in using Google SSO via Clerk",
+    "file": "app/(auth)/sign-in.tsx"
+  },
+  {
+    "event": "sign_in_failed",
+    "description": "User sign-in attempt fails (email/password or Google)",
+    "file": "app/(auth)/sign-in.tsx"
+  },
+  {
+    "event": "user_signed_up",
+    "description": "User initiates email/password account creation via Clerk",
+    "file": "app/(auth)/sign-up.tsx"
+  },
+  {
+    "event": "email_verification_completed",
+    "description": "User successfully verifies email and completes account creation",
+    "file": "app/(auth)/sign-up.tsx"
+  },
+  {
+    "event": "sign_up_failed",
+    "description": "User sign-up or verification attempt fails",
+    "file": "app/(auth)/sign-up.tsx"
+  },
+  {
+    "event": "user_signed_up_google",
+    "description": "User successfully creates an account using Google SSO via Clerk",
+    "file": "app/(auth)/sign-up.tsx"
+  },
+  {
+    "event": "user_signed_out",
+    "description": "User signs out from the settings screen",
+    "file": "app/(tabs)/settings.tsx"
+  },
+  {
+    "event": "subscription_expanded",
+    "description": "User expands a subscription card on the home screen to view details",
+    "file": "app/(tabs)/index.tsx"
+  },
+  {
+    "event": "subscription_details_viewed",
+    "description": "User opens the subscription details page",
+    "file": "app/subscriptions/[id].tsx"
+  }
+]

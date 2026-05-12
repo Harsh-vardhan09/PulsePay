@@ -39,20 +39,29 @@
           }
         }
       ],
-      ["expo-font",{
-        "fonts":[
-          "./assets/fonts/plusJakartaSans-Regular.ttf",
-          "./assets/fonts/plusJakartaSans-Bold.ttf",
-          "./assets/fonts/plusJakartaSans-Medium.ttf",
-          "./assets/fonts/plusJakartaSans-SemiBold.ttf",
-          "./assets/fonts/plusJakartaSans-ExtraBold.ttf",
-          "./assets/fonts/plusJakartaSans-Light.ttf"
-        ]
-      }]
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/plusJakartaSans-Regular.ttf",
+            "./assets/fonts/plusJakartaSans-Bold.ttf",
+            "./assets/fonts/plusJakartaSans-Medium.ttf",
+            "./assets/fonts/plusJakartaSans-SemiBold.ttf",
+            "./assets/fonts/plusJakartaSans-ExtraBold.ttf",
+            "./assets/fonts/plusJakartaSans-Light.ttf"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a0acf4a2-5d81-48cb-8711-acf67b7c0afc"
+      }
     }
   }
 }
