@@ -9,7 +9,7 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 const SafeAreaView = styled(RNSafeAreaView)
 
 
-const subscriptions = () => {
+const Subscriptions = () => {
   const [searchQuery, setSearchquery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const { subscriptions } = useSubscriptions()
