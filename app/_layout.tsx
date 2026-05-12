@@ -1,9 +1,10 @@
+import { SubscriptionsProvider } from '@/context/SubscriptionsContext';
+import "@/global.css";
+import { ClerkProvider } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
+import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from "expo-router";
-import "@/global.css"
-import { useFonts } from 'expo-font'
 import { useEffect } from "react";
-import { ClerkProvider } from '@clerk/expo'
-import { tokenCache } from '@clerk/expo/token-cache'
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,7 +34,9 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <SubscriptionsProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </SubscriptionsProvider>
     </ClerkProvider>
   )
 }
